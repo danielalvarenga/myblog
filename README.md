@@ -106,6 +106,47 @@ Agora nossa aplicação já está bem estruturada para darmos início ao desenvo
 	$ git remote add origin https://github.com/SEU_PERFIL_GITHUB/myblog.git
 	$ git push -u origin master
 
+Gere a estrutura simples de Layout com usando a gem 'rails layout' para deixar as views um pouco mais agradáveis:
 
+	$ rails generate layout simple --force
 
+Rails Layout irá criar alguns arquivos de layout na pasta "myblog/app/views/layouts", sendo "application.html.erb" o layout padrão da aplicação e dentro dele serão carregadas todas as views e "_navigation_links.html.erb" é onde podemos adicionar links que serão exibidos em um menu no topo da página.
 
+Agora crie o model Post e execulte migrate:
+
+	$ rails generate model Post title:string body:text date_publication:datetime
+	$ rake db:migrate
+
+Crie o controller de Post e adicione uma função chamada "index":
+
+	$ rails generate controller Post index
+
+Será criada a pasta "myblog/app/views/post" automáticamente. Crie um arquivo chamado "index.html.erb" dentro da pasta "post" e adicione:
+
+	<h1>Posts</h1>
+
+Para adicionar esta view como Página Inicial adicione este código em "myblog/config/routes.rb" logo após "Myblog::Application.routes.draw do":
+
+	root to: 'post#index'
+
+Instale a gem Devise em nossa aplicação para autenticação de usuários:
+
+	$ rails generate devise:install
+
+Crie o Model de usuário com Devise e execulte migrate:
+
+	$ rails generate devise User
+	$ rake db:migrate
+
+Caso queira personalizar as views de Devise você pode importá-las para sua aplicação com o comando:
+
+	$ rails generate devise:views
+
+Em "myblog/app/views/layout/_navigation_links.html.erb" adicione os links de cadastro, login e logout de usuário:
+
+	<% if user_signed_in? %>
+	<li><%= link_to 'Logout', destroy_user_session_path, method: :delete %></li>
+	<% else %>
+		<li><%= link_to 'Cadastre-se', new_user_registration_path %></li>
+		<li><%= link_to 'login', user_session_path %></li>
+	<% end %>
